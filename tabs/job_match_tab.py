@@ -1,6 +1,7 @@
 import gradio as gr
 
-from utils import onSystemPromptChanged, userMessage, responseStream, default_system_prompts
+from utils import onSystemPromptChanged, userMessage, responseStream
+from constants import default_system_prompts
 
 
 def build_job_match_tab():

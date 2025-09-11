@@ -1,5 +1,6 @@
 import gradio as gr
 
+from constants import TAB_JOB_MATCH, TAB_STUDY_NOTES, TAB_NAMES, modelChoices, MODEL_OPEN_AI
 from tabs.generic_tab import build_generic_tab
 from tabs.job_match_tab import build_job_match_tab
 from tabs.study_notes_tab import build_study_notes_tab
@@ -10,16 +11,6 @@ with gr.Blocks() as ui:
     systemMessage = "You are a comedian that tell jokes."
     contextModelchanged = True
 
-    modelChoices = ["Open AI", "Claude AI", "Gemini AI"]
-
-    systemPromptChoices = [
-        "Recipe Recommendation",
-        "Study Notes Question And Answer",
-        "Basic Job Match Assistant",
-        "Simple Code Explainer",
-        "Virtual Case Study Creator"
-    ]
-
     with gr.Row(variant="compact"):
         # Left: tabs header placeholder; Right: model selector aligned to the right without background
         with gr.Column(scale=1):
@@ -27,7 +18,7 @@ with gr.Blocks() as ui:
         with gr.Column(scale=0, min_width=220):
             modelDropdown = gr.Dropdown(
                 choices=modelChoices,
-                value=modelChoices[0],
+                value=MODEL_OPEN_AI,
                 label="Model",
                 interactive=True,
                 container=False,
@@ -36,18 +27,18 @@ with gr.Blocks() as ui:
             modelDropdown.input(fn=onModelChange, inputs=modelDropdown)
 
     custom_tab_builders = {
-        "Basic Job Match Assistant": build_job_match_tab,
-        "Study Notes Question And Answer": build_study_notes_tab
+        TAB_JOB_MATCH: build_job_match_tab,
+        TAB_STUDY_NOTES: build_study_notes_tab
     }
 
     with gr.Tabs() as tabs:
         tab_components = {}
-        for topic in systemPromptChoices:
-            with gr.TabItem(topic):
-                builder = custom_tab_builders.get(topic)
+        for tab_id, tab_name in TAB_NAMES.items():
+            with gr.TabItem(tab_name):
+                builder = custom_tab_builders.get(tab_id)
                 if builder:
-                    tab_components[topic] = builder()
+                    tab_components[tab_id] = builder()
                 else:
-                    tab_components[topic] = build_generic_tab(topic)
+                    tab_components[tab_id] = build_generic_tab(tab_id)
 
 ui.launch(share=True)

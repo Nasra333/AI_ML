@@ -12,10 +12,6 @@ openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 anthropic = anthropicai.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-openaiSelect = "Open AI"
-claudeSelect = "Claude AI"
-gemmaSelect = "Gemini AI"
-
 selectedModel: str = None
 systemMessage: str = None
 
@@ -111,12 +107,3 @@ def responseStream(history: list):
         history[-1]['content'] += character
         yield history
 
-
-# Create a mapping for nicer default system prompts per tab (can be customized later)
-default_system_prompts = {
-    "Recipe Recommendation": "You are a helpful chef assistant. Ask clarifying questions and suggest recipes.",
-    "Study Notes Question And Answer": "You help students with Q&A based on study notes. Keep answers concise and structured.",
-    "Basic Job Match Assistant": "You assist with matching candidate skills to job descriptions and suggest improvements.",
-    "Simple Code Explainer": "You explain code in simple terms with step-by-step reasoning and examples.",
-    "Virtual Case Study Creator": "You create realistic case studies with constraints and questions for analysis."
-}
