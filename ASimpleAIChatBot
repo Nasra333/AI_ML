@@ -70,7 +70,6 @@ def streamGemma(history: list):
         history[-1]['content'] += result
         yield history
 
-    
 
 def onModelChange(model: str):
     global selectedModel
@@ -100,17 +99,34 @@ def userMessage(message: str, history: list):
     return "", messages
 
 def responseStream(history: list):
-    result: str = ""
-    response = openai.chat.completions.create(
-        model = "gpt-4o-mini", 
-        messages=history, 
-        stream=True)
     history.append({"role": "assistant", "content": ""})
-    for chunk in response:
-        result += chunk.choices[0].delta.content or ""
-    for character in result:
+    if (selectedModel is openaiSelect):
+        result: str = ""
+        response = openai.chat.completions.create(
+            model = "gpt-4o-mini", 
+            messages=history, 
+            stream=True)
+        for chunk in response:
+            result += chunk.choices[0].delta.content or ""
+        for character in result:
             history[-1]['content'] += character
             yield history
+    elif (selectedModel is claudeSelect):
+        response = anthropic.messages.stream(
+            model="claude-opus-4-1-20250805",
+            max_tokens=1024,
+            temperature=0.7,
+            system= systemMessage if systemMessage is not None else "You are a comedian that tell jokes.",
+            messages = history
+        )
+        result: str = ""
+        with response as stream:
+            for chunk in stream.text_stream:
+                result += chunk
+            for character in result:
+                history[-1]['content'] += character
+                yield history
+    else: streamGemma(history)
 
 with gr.Blocks() as ui:
     
