@@ -1,0 +1,14 @@
+openai
+anthropic
+google-generativeai
+beautifulsoup4
+python-dotenv
+gradio
+requests
+ipython
+dotenv
+bs4
+anthropic
+google-generativeai
+gradio
+requests

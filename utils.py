@@ -1,59 +1,51 @@
-
-
 import os
-import requests
-from openai import OpenAI
-from openai import OpenAIError
+
 import anthropic as anthropicai
 import google.generativeai as genai
-from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from typing import List, Dict, Any
-import gradio as gr
-from datetime import datetime
-
+from openai import OpenAI
 
 load_dotenv(override=True)
+
 # Initialize OpenAI client
 openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 anthropic = anthropicai.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-
-openaiSelect = "Open AI"
-claudeSelect = "Claude AI"
-gemmaSelect = "Gemini AI"
 
 selectedModel: str = None
 systemMessage: str = None
 
 contextModelchanged: bool = False
 
+
 def streamOpenAI(history: list):
     result: str = ""
     response = openai.chat.completions.create(
-        model = "gpt-4o-mini", 
-        messages=history, 
+        model="gpt-4o-mini",
+        messages=history,
         stream=True)
     history.append({"role": "assistant", "content": ""})
     for chunk in response:
         result += chunk.choices[0].delta.content or ""
     for character in result:
-            history[-1]['content'] += character
-            yield history
-        
+        history[-1]['content'] += character
+        yield history
+
+
 def streamClaude(history: list):
     response = anthropic.messages.stream(
         model="claude-opus-4-1-20250805",
         max_tokens=1024,
         temperature=0.7,
-        messages = history
+        messages=history
     )
     result: str = ""
     with response as stream:
         for chunk in stream.text_stream:
             result += chunk
             yield result
-            
+
+
 def streamGemma(history: list):
     response = genai.chat.completions.create(
         model="gemini-1.5-pro",
@@ -76,29 +68,34 @@ def onModelChange(model: str):
     selectedModel = model
     global contextModelchanged
     contextModelchanged = True
-    
+
+
 def onSystemPromptChanged(prompt: str):
     global systemMessage
     systemMessage = prompt
     global contextModelchanged
     contextModelchanged = True
-          
+
+
 def userMessage(message: str, history: list):
     messages = []
     global contextModelchanged
     global systemMessage
-    
+
     if contextModelchanged:
         history.clear()
-        system_prompt = [{"role": "system", "content": systemMessage if systemMessage is not None else "You are a comedian that tell jokes."}]
+        system_prompt = [{"role": "system",
+                          "content": systemMessage if systemMessage is not None else "You are a comedian that tell jokes."}]
         messages = system_prompt
         contextModelchanged = False
-        
+
     user_prompt = [{"role": "user", "content": message}]
     messages = history + user_prompt
     return "", messages
 
+
 def responseStream(history: list):
+<<<<<<< HEAD:ASimpleAIChatBot
     history.append({"role": "assistant", "content": ""})
     if (selectedModel is openaiSelect):
         result: str = ""
@@ -127,28 +124,17 @@ def responseStream(history: list):
                 history[-1]['content'] += character
                 yield history
     else: streamGemma(history)
+=======
+    result: str = ""
+    response = openai.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=history,
+        stream=True)
+    history.append({"role": "assistant", "content": ""})
+    for chunk in response:
+        result += chunk.choices[0].delta.content or ""
+    for character in result:
+        history[-1]['content'] += character
+        yield history
+>>>>>>> 7b5fc262010076802785dc80ad42bf36ea6a6731:utils.py
 
-with gr.Blocks() as ui:
-    
-    selectedModel = "Open AI"
-    systemMessage = "You are a comedian that tell jokes."
-    contextModelchanged = True
-    
-    modelChoices = ["Open AI", "Claude AI", "Gemini AI"]
-    modelDropdown = gr.Dropdown(choices=modelChoices, label="Select a model", value=modelChoices[0])
-    modelDropdown.input(fn=onModelChange, inputs=modelDropdown)
-    
-    systemPromptChoices = ["Recipe Recommendation", "Study Notes Question And Answer", "Basic Job Match Assistant", "Simple Code Explainer", "Virtual Case Study Creator"]
-    syspDropdown = gr.Dropdown(choices=systemPromptChoices, label="Select a chat topic", value=systemPromptChoices[0])
-    syspDropdown.change(fn=onSystemPromptChanged, inputs=syspDropdown)
-    
-    chatbot = gr.Chatbot(type="messages")
-    msg = gr.Textbox()
-    clear = gr.Button("Clear")
-
-    msg.submit(userMessage, [msg, chatbot], [msg, chatbot], queue=False).then(
-        responseStream, chatbot, chatbot
-    )
-    clear.click(lambda: None, None, chatbot, queue=False)
-
-ui.launch(share=True)
