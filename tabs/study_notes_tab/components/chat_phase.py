@@ -34,7 +34,7 @@ def create_chat_phase_ui():
 
         with gr.Accordion("Options", open=False):
             style = gr.CheckboxGroup(
-                choices=["Bullet Points", "Numbered", "Flashcards"],
+                choices=["Bullet Points", "Numbered", "Flashcards", "Short Paragraphs", "Outline", "Q&A"],
                 value=["Bullet Points"],
                 label="Answer Style"
             )
