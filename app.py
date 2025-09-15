@@ -46,4 +46,4 @@ with gr.Blocks() as demo:
                 else:
                     tab_components[tab_id] = build_generic_tab(tab_id)
 
-demo.launch(share=True)
+demo.launch(share=False, server_port=8080)
