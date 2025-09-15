@@ -1,12 +1,18 @@
 import gradio as gr
 
-from constants import TAB_JOB_MATCH, TAB_STUDY_NOTES, TAB_NAMES, modelChoices, MODEL_OPEN_AI
+from constants import (
+    TAB_JOB_MATCH,
+    TAB_STUDY_NOTES,
+    TAB_NAMES,
+    modelChoices,
+    MODEL_OPEN_AI,
+)
 from tabs.generic_tab import build_generic_tab
 from tabs.job_match_tab import build_job_match_tab
 from tabs.study_notes_tab import build_study_notes_tab
 from utils import onModelChange
 
-with gr.Blocks() as ui:
+with gr.Blocks() as demo:
     selectedModel = "Open AI"
     systemMessage = "You are a comedian that tell jokes."
     contextModelchanged = True
@@ -22,15 +28,14 @@ with gr.Blocks() as ui:
                 label="Model",
                 interactive=True,
                 container=False,
-                show_label=False
+                show_label=False,
             )
             modelDropdown.input(fn=onModelChange, inputs=modelDropdown)
 
     custom_tab_builders = {
         TAB_JOB_MATCH: build_job_match_tab,
-        TAB_STUDY_NOTES: build_study_notes_tab
+        TAB_STUDY_NOTES: build_study_notes_tab,
     }
-
     with gr.Tabs() as tabs:
         tab_components = {}
         for tab_id, tab_name in TAB_NAMES.items():
@@ -41,4 +46,4 @@ with gr.Blocks() as ui:
                 else:
                     tab_components[tab_id] = build_generic_tab(tab_id)
 
-ui.launch(share=True)
+demo.launch(share=True)
