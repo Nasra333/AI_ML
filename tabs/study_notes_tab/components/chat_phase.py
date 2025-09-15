@@ -8,11 +8,15 @@ import gradio as gr
 def create_chat_phase_ui():
     """
     Create the chat phase UI components.
+    This function should be called within a Gradio context.
 
     Returns:
         Dictionary containing all chat phase components
     """
-    with gr.Group(visible=False) as chat_phase:
+    # Create components directly in current Gradio context
+    chat_phase = gr.Group(visible=False)
+
+    with chat_phase:
         gr.Markdown("### Ask questions about your study notes")
 
         with gr.Row():

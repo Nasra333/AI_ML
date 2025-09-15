@@ -13,7 +13,7 @@ from .components.chat_phase import create_chat_phase_ui
 
 # Import handlers
 from .handlers.input_handlers import toggle_input_method, process_notes
-from .handlers.chat_handlers import handle_question
+from .handlers.chat_handlers import handle_question_clean_ui, get_ai_response_with_context
 from .handlers.navigation_handlers import reset_to_input_phase
 
 
@@ -79,9 +79,9 @@ def _setup_event_handlers(input_components: dict, chat_components: dict, notes_s
         ]
     )
 
-    # Handle questions
+    # Handle questions with clean UI
     chat_components["ask_btn"].click(
-        handle_question,
+        handle_question_clean_ui,
         inputs=[
             notes_state,
             chat_components["question"],
@@ -95,7 +95,7 @@ def _setup_event_handlers(input_components: dict, chat_components: dict, notes_s
         ],
         queue=False
     ).then(
-        responseStream,
+        get_ai_response_with_context,
         inputs=[chat_components["chatbot"]],
         outputs=[chat_components["chatbot"]]
     )

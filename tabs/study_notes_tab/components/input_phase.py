@@ -9,11 +9,15 @@ from ..utils.file_readers import get_supported_file_types
 def create_input_phase_ui():
     """
     Create the input phase UI components.
+    This function should be called within a Gradio context.
 
     Returns:
         Dictionary containing all input phase components
     """
-    with gr.Group() as input_phase:
+    # Create components directly in current Gradio context
+    input_phase = gr.Group()
+
+    with input_phase:
         gr.Markdown("### Step 1: Choose how to provide your study notes")
 
         input_method = gr.Radio(
@@ -23,14 +27,16 @@ def create_input_phase_ui():
         )
 
         # Conditional inputs
-        with gr.Group() as paste_input:
+        paste_input = gr.Group()
+        with paste_input:
             notes_textbox = gr.Textbox(
                 label="Study Notes",
                 lines=10,
                 placeholder="Paste or type your study notes here..."
             )
 
-        with gr.Group(visible=False) as file_input:
+        file_input = gr.Group(visible=False)
+        with file_input:
             file_upload = gr.File(
                 label="Upload Study Notes",
                 file_types=get_supported_file_types(),
