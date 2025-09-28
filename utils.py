@@ -107,15 +107,6 @@ def responseStream(history: list):
         history[-1]['content'] += character
         yield history
 
-def askAI(input: str):
-    prompt = [
-            {"role": "system", "content": "You are a helpful AI assistant. Your role is to complete the user’s tasks efficiently. Provide only the requested output, without unnecessary explanations or additional information."},
-            {"role": "user", "content": input}
-        ]
-
-    response = openai.chat.completions.create(model = "gpt-4o-mini", messages=prompt)
-    return response.choices[0].message.content
-
 def streamAIResponse(messages: list):
     response = openai.chat.completions.create(
         model="gpt-4o-mini",
