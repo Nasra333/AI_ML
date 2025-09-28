@@ -3,7 +3,7 @@ from PyPDF2 import PdfReader
 import requests
 from bs4 import BeautifulSoup
 
-from utils import onSystemPromptChanged, askAI, streamAIResponse
+from utils import onSystemPromptChanged, askAI, streamAIResponse, openai
 from constants import TAB_JOB_MATCH, default_system_prompts
 
 
@@ -25,7 +25,7 @@ def build_job_match_tab():
         with gr.Row():
             match_btn = gr.Button("Match Candidate to Job", variant="primary")
             clear = gr.Button("Clear")
-        result_box = gr.Markdown(label="Match Result", visible=False)
+        result_box = gr.Markdown(label="Match Result", elem_id="job-match-result")
 
         def build_match_prompt(jd: str, cv: str):
             jd = jd or ""
@@ -54,14 +54,6 @@ def build_job_match_tab():
                 soup = BeautifulSoup(response.text, 'html.parser')
                 page_content = soup.get_text(separator="\n", strip=True)  # Extract all text from the page
                 return page_content
-                # # Use AI to analyze the page content and extract the job description
-                # ai_prompt = (
-                #     "You are an AI assistant. Analyze the following webpage content and extract the job description. "
-                #     "If no job description is found, respond with 'No job description found.'\n\n"
-                #     f"Webpage Content:\n{page_content}"
-                # )
-                # job_desc = askAI(ai_prompt)  # Assuming `askAI` sends the prompt to the AI model and returns the response
-                # return job_desc
             except Exception as e:
                 return f"Error fetching job description: {e}"
 
@@ -80,17 +72,16 @@ def build_job_match_tab():
                 cv = resume_content or ""
             
             prompt = build_match_prompt(jd, cv)
-
-            print(f"User Prompt: {prompt}")
             
             messages = [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt}
             ]
             
-            
+            response = ""
             for chunk in streamAIResponse(messages):
-                yield chunk
+                response = chunk
+                yield response
 
         def toggle_resume_input(input_type):
             return gr.update(visible=(input_type == "Paste Resume")), gr.update(visible=(input_type == "Upload PDF"))
@@ -99,5 +90,5 @@ def build_job_match_tab():
 
         match_btn.click(on_match, [job_desc_url, resume_input_type, resume_text, resume_file], result_box)
         
-        clear.click(lambda: gr.update(value="", visible=False), None, result_box, queue=False)
+        clear.click(lambda: (gr.update(value="", visible=False)), None, [result_box], queue=False)
         return {"result_box": result_box, "match_btn": match_btn, "clear": clear, "job_desc_url": job_desc_url, "resume_input_type": resume_input_type, "resume_text": resume_text, "resume_file": resume_file}
