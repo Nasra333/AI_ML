@@ -12,7 +12,7 @@ from tabs.job_match_tab import build_job_match_tab
 from tabs.study_notes_tab import build_study_notes_tab
 from utils import onModelChange
 
-with gr.Blocks() as demo:
+with gr.Blocks(css="#job-match-result { border: 1px solid #e0e0e0; padding: 1rem; border-radius: 0.5rem; }") as demo:
     selectedModel = "Open AI"
     systemMessage = "You are a comedian that tell jokes."
     contextModelchanged = True

@@ -107,3 +107,15 @@ def responseStream(history: list):
         history[-1]['content'] += character
         yield history
 
+def streamAIResponse(messages: list):
+    response = openai.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        stream=True)
+    
+    result = ""
+    for chunk in response:
+        if chunk.choices[0].delta.content:
+            result += chunk.choices[0].delta.content
+            yield result
+

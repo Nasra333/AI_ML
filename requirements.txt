@@ -12,3 +12,6 @@ anthropic
 google-generativeai
 gradio
 requests
+PyPDF2
+python-docx
+beautifulsoup4
