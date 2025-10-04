@@ -4,20 +4,22 @@ A multi-tab AI application supporting various AI models (OpenAI, Anthropic, Goog
 
 ## Project Setup
 
-### Option 1: Using Conda Environment (Recommended)
+### Prerequisites
+- Python 3.11 or higher
+- pip (Python package installer)
 
-Create and activate the conda environment:
-```bash
-conda env create -f environment.yml
-conda activate gen_ai_project
-```
+### Installation
 
-### Option 2: Using pip
+1. **Create a virtual environment (recommended):**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-Install dependencies with pip:
-```bash
-pip install -r requirements.txt
-```
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Running the Application
 

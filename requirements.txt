@@ -1,17 +1,50 @@
+# AI/ML Dependencies
+beautifulsoup4
+plotly
+transformers
+sentence-transformers
+datasets==3.6.0
 openai
 anthropic
 google-generativeai
-beautifulsoup4
-python-dotenv
 gradio
-requests
+gensim
+modal
+ollama
+psutil
+setuptools
+speedtest-cli
+langchain
+langchain-core
+langchain-text-splitters
+langchain-openai
+langchain-chroma
+langchain-community
+feedparser
+twilio
+pydub
+protobuf==3.20.2
+wandb
 ipython
-dotenv
 bs4
-anthropic
-google-generativeai
-gradio
-requests
 PyPDF2
 python-docx
-beautifulsoup4
+
+# Core Python Dependencies
+python-dotenv
+requests
+numpy
+pandas
+scipy
+matplotlib
+scikit-learn
+chromadb
+pyarrow
+
+# Development Dependencies
+jupyterlab
+ipywidgets
+jupyter-dash
+
+# PyTorch (CPU version - users can install GPU version separately if needed)
+torch --index-url https://download.pytorch.org/whl/cpu
