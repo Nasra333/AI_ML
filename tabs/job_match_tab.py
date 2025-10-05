@@ -2,9 +2,13 @@ import gradio as gr
 from PyPDF2 import PdfReader
 import requests
 from bs4 import BeautifulSoup
+import logging
 
-from utils import onSystemPromptChanged, streamAIResponse, openai
+from utils import onSystemPromptChanged, responseStream, openai
 from constants import TAB_JOB_MATCH, default_system_prompts
+
+# Configure logger
+logger = logging.getLogger(__name__)
 
 
 def build_job_match_tab():
@@ -33,8 +37,8 @@ def build_job_match_tab():
         with gr.Row():
             match_btn = gr.Button("Match Candidate to Job", variant="primary")
             clear = gr.Button("Clear")
-        result_box = gr.Markdown(label="Match Result",
-                                 elem_id="job-match-result")
+        result_box = gr.Chatbot(type="messages", label="Match Result",
+                                elem_id="job-match-result")
 
         def build_match_prompt(jd: str, cv: str):
             jd = jd or ""
@@ -67,35 +71,73 @@ def build_job_match_tab():
             except Exception as e:
                 return f"Error fetching job description: {e}"
 
-        def on_match(job_input_method: str, url: str, job_text: str, resume_input_type: str, resume_content, resume_file):
+        def on_match(job_input_method: str, url: str, job_text: str, resume_input_type: str, resume_content, resume_file, history: list):
             system_prompt = default_system_prompts.get(
                 TAB_JOB_MATCH, "You are a job match assistant, who takes job description and candidate resume and provides a match score, key matching skills, gaps and suggestions, and a brief tailored summary.")
             onSystemPromptChanged(system_prompt)
 
-            yield gr.update(visible=True)
+            # Initialize history if None
+            if history is None:
+                history = []
 
-            # Get job description based on input method
-            if job_input_method == "Job URL":
-                jd = extract_job_description_from_url_with_ai(url)
-            else:  # "Paste Description"
-                jd = job_text or ""
+            try:
+                # Get job description based on input method
+                if job_input_method == "Job URL":
+                    jd = extract_job_description_from_url_with_ai(url)
+                else:  # "Paste Description"
+                    jd = job_text or ""
 
-            if resume_input_type == "Upload PDF" and resume_file is not None:
-                cv = extract_text_from_pdf(resume_file.name)
-            else:
-                cv = resume_content or ""
+                if resume_input_type == "Upload PDF" and resume_file is not None:
+                    cv = extract_text_from_pdf(resume_file.name)
+                else:
+                    cv = resume_content or ""
 
-            prompt = build_match_prompt(jd, cv)
+                prompt = build_match_prompt(jd, cv)
 
-            messages = [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": prompt}
-            ]
+                # Add user message to history with context
+                job_summary = f"Job from URL: {url}" if job_input_method == "Job URL" else "Pasted job description"
+                resume_summary = "Uploaded PDF resume" if resume_input_type == "Upload PDF" else "Pasted resume"
+                updated_history = history + [{"role": "user", "content": f"Analyze job match for {job_summary} and {resume_summary}."}]
+                yield updated_history
 
-            response = ""
-            for chunk in streamAIResponse(messages):
-                response = chunk
-                yield response
+                # Build messages for AI with system prompt and full context
+                messages = [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ]
+
+                # Stream AI response and update history with error handling
+                try:
+                    for ai_history in responseStream(messages):
+                        # Combine display history with AI response
+                        yield updated_history + [ai_history[-1]]
+                except Exception as stream_error:
+                    # Log the streaming error
+                    logger.error(f"Error during AI response streaming: {stream_error}", exc_info=True)
+                    
+                    # Provide user-facing error message
+                    error_message = {
+                        "role": "assistant",
+                        "content": f"⚠️ An error occurred while generating the response: {str(stream_error)}\n\nPlease try again or contact support if the issue persists."
+                    }
+                    yield updated_history + [error_message]
+                    
+                    # Stop the generator after error
+                    return
+
+            except Exception as e:
+                # Log the general error
+                logger.error(f"Error in job match processing: {e}", exc_info=True)
+                
+                # Provide user-facing error message
+                error_message = {
+                    "role": "assistant",
+                    "content": f"⚠️ An error occurred while processing your request: {str(e)}\n\nPlease check your inputs and try again."
+                }
+                yield history + [error_message]
+                
+                # Stop the generator after error
+                return
 
         def toggle_job_input(input_method):
             return gr.update(visible=(input_method == "Job URL")), gr.update(visible=(input_method == "Paste Description"))
@@ -109,8 +151,8 @@ def build_job_match_tab():
                                  resume_input_type], outputs=[resume_text, resume_file])
 
         match_btn.click(on_match, [job_input_type, job_desc_url, job_desc_text,
-                        resume_input_type, resume_text, resume_file], result_box)
+                        resume_input_type, resume_text, resume_file, result_box], result_box)
 
-        clear.click(lambda: (gr.update(value="", visible=False)),
+        clear.click(lambda: None,
                     None, [result_box], queue=False)
         return {"result_box": result_box, "match_btn": match_btn, "clear": clear, "job_input_type": job_input_type, "job_desc_url": job_desc_url, "job_desc_text": job_desc_text, "resume_input_type": resume_input_type, "resume_text": resume_text, "resume_file": resume_file}
