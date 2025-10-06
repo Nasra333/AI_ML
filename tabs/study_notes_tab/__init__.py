@@ -6,6 +6,7 @@ Provides document upload/paste functionality with AI-powered Q&A capabilities.
 """
 import gradio as gr
 from utils import responseStream
+from constants import TAB_STUDY_NOTES, default_tab_titles
 
 # Import components
 from .components.input_phase import create_input_phase_ui
@@ -25,7 +26,8 @@ def build_study_notes_tab():
         Dictionary containing all tab components for external access
     """
     with gr.Column():
-        gr.Markdown("## Study Notes Q&A")
+        gr.Markdown(
+            "## " + default_tab_titles.get(TAB_STUDY_NOTES, 'Study Notes Guide.'))
 
         # State to store processed notes
         notes_state = gr.State("")
@@ -60,7 +62,8 @@ def _setup_event_handlers(input_components: dict, chat_components: dict, notes_s
     input_components["input_method"].change(
         toggle_input_method,
         inputs=[input_components["input_method"]],
-        outputs=[input_components["paste_input"], input_components["file_input"]]
+        outputs=[input_components["paste_input"],
+                 input_components["file_input"]]
     )
 
     # Process notes and switch phases

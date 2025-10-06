@@ -6,8 +6,6 @@ from constants import (
     TAB_JOB_MATCH,
     TAB_STUDY_NOTES,
     TAB_NAMES,
-    modelChoices,
-    MODEL_OPEN_AI,
 )
 from tabs.generic_tab import build_generic_tab
 from tabs.job_match_tab import build_job_match_tab
@@ -19,23 +17,17 @@ load_dotenv()
 
 with gr.Blocks(css="#job-match-result { border: 1px solid #e0e0e0; padding: 1rem; border-radius: 0.5rem; }") as demo:
     selectedModel = "Open AI"
-    systemMessage = "You are a comedian that tell jokes."
+    systemMessage = "You are a useful AI utility buddy."
     contextModelchanged = True
 
-    with gr.Row(variant="compact"):
-        # Left: tabs header placeholder; Right: model selector aligned to the right without background
-        with gr.Column(scale=1):
-            tabs_header = gr.Tabs()
-        with gr.Column(scale=0, min_width=220):
-            modelDropdown = gr.Dropdown(
-                choices=modelChoices,
-                value=MODEL_OPEN_AI,
-                label="Model",
-                interactive=True,
-                container=False,
-                show_label=False,
-            )
-            modelDropdown.input(fn=onModelChange, inputs=modelDropdown)
+    with gr.Row():
+        gr.Markdown("""
+        # Your Personal Assistant - Zeno
+        ### What can I help you with today?
+        """)
+
+    with gr.Row():
+        tabs_header = gr.Tabs()
 
     custom_tab_builders = {
         TAB_JOB_MATCH: build_job_match_tab,
