@@ -1,0 +1,58 @@
+# Railway Ignore File
+# Files and directories to exclude from Railway deployment
+
+# Development files
+Test*.py
+*.ipynb
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Documentation (optional, remove if you want docs deployed)
+*.md
+!README.md
+
+# Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.jupyter/
+.gradio/
+
+# Local environment
+.env
+.env.local
+
+# Build artifacts
+build/
+dist/
+*.spec

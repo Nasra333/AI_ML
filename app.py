@@ -1,4 +1,6 @@
+import os
 import gradio as gr
+from dotenv import load_dotenv
 
 from constants import (
     TAB_JOB_MATCH,
@@ -11,6 +13,9 @@ from tabs.generic_tab import build_generic_tab
 from tabs.job_match_tab import build_job_match_tab
 from tabs.study_notes_tab import build_study_notes_tab
 from utils import onModelChange
+
+# Load environment variables
+load_dotenv()
 
 with gr.Blocks(css="#job-match-result { border: 1px solid #e0e0e0; padding: 1rem; border-radius: 0.5rem; }") as demo:
     selectedModel = "Open AI"
@@ -46,4 +51,14 @@ with gr.Blocks(css="#job-match-result { border: 1px solid #e0e0e0; padding: 1rem
                 else:
                     tab_components[tab_id] = build_generic_tab(tab_id)
 
-demo.launch(share=True)
+if __name__ == "__main__":
+    # Get configuration from environment variables
+    server_name = os.getenv("GRADIO_SERVER_NAME", "0.0.0.0")
+    server_port = int(os.getenv("PORT", "7860"))
+    
+    # Launch with production-ready settings
+    demo.launch(
+        server_name=server_name,
+        server_port=server_port,
+        share=False  # Disable share in production
+    )

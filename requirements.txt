@@ -47,4 +47,5 @@ ipywidgets
 jupyter-dash
 
 # PyTorch (CPU version - users can install GPU version separately if needed)
-torch --index-url https://download.pytorch.org/whl/cpu
+--index-url https://download.pytorch.org/whl/cpu
+torch
