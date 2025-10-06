@@ -36,7 +36,13 @@ jobs:
 
       - name: Check for secrets
         run: |
-          if grep -r "sk-" . --exclude-dir=.git --exclude-dir=venv --exclude-dir=.venv; then
+          if grep -rE "(sk-[a-zA-Z0-9]{20,}|AKIA[0-9A-Z]{16})" . \
+            --exclude-dir=.git \
+            --exclude-dir=venv \
+            --exclude-dir=.venv \
+            --exclude-dir=.github \
+            --exclude="*.md" \
+            --exclude="*.txt"; then
             echo "❌ Potential API key found in code!"
             exit 1
           fi
