@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import logging
 
 from utils import onSystemPromptChanged, responseStream, openai
-from constants import TAB_JOB_MATCH, default_system_prompts
+from constants import TAB_JOB_MATCH, default_system_prompts, default_tab_titles
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 
 def build_job_match_tab():
     with gr.Column():
-        gr.Markdown("## Basic Job Match Assistant")
+        gr.Markdown(
+            "## " + default_tab_titles.get(TAB_JOB_MATCH, 'Job Match Assistant'))
         with gr.Column():
             job_input_type = gr.Radio(
                 choices=["Job URL", "Paste Description"],
@@ -73,7 +74,7 @@ def build_job_match_tab():
 
         def on_match(job_input_method: str, url: str, job_text: str, resume_input_type: str, resume_content, resume_file, history: list):
             system_prompt = default_system_prompts.get(
-                TAB_JOB_MATCH, "You are a job match assistant, who takes job description and candidate resume and provides a match score, key matching skills, gaps and suggestions, and a brief tailored summary.")
+                TAB_JOB_MATCH, "You are a job match assistant")
             onSystemPromptChanged(system_prompt)
 
             # Initialize history if None
@@ -97,7 +98,8 @@ def build_job_match_tab():
                 # Add user message to history with context
                 job_summary = f"Job from URL: {url}" if job_input_method == "Job URL" else "Pasted job description"
                 resume_summary = "Uploaded PDF resume" if resume_input_type == "Upload PDF" else "Pasted resume"
-                updated_history = history + [{"role": "user", "content": f"Analyze job match for {job_summary} and {resume_summary}."}]
+                updated_history = history + \
+                    [{"role": "user", "content": f"Analyze job match for {job_summary} and {resume_summary}."}]
                 yield updated_history
 
                 # Build messages for AI with system prompt and full context
@@ -113,29 +115,31 @@ def build_job_match_tab():
                         yield updated_history + [ai_history[-1]]
                 except Exception as stream_error:
                     # Log the streaming error
-                    logger.error(f"Error during AI response streaming: {stream_error}", exc_info=True)
-                    
+                    logger.error(
+                        f"Error during AI response streaming: {stream_error}", exc_info=True)
+
                     # Provide user-facing error message
                     error_message = {
                         "role": "assistant",
                         "content": f"⚠️ An error occurred while generating the response: {str(stream_error)}\n\nPlease try again or contact support if the issue persists."
                     }
                     yield updated_history + [error_message]
-                    
+
                     # Stop the generator after error
                     return
 
             except Exception as e:
                 # Log the general error
-                logger.error(f"Error in job match processing: {e}", exc_info=True)
-                
+                logger.error(
+                    f"Error in job match processing: {e}", exc_info=True)
+
                 # Provide user-facing error message
                 error_message = {
                     "role": "assistant",
                     "content": f"⚠️ An error occurred while processing your request: {str(e)}\n\nPlease check your inputs and try again."
                 }
                 yield history + [error_message]
-                
+
                 # Stop the generator after error
                 return
 
