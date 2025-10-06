@@ -34,9 +34,9 @@ Railway needs your API keys to function properly. Add these in the Railway dashb
 3. Add the following environment variables:
 
 ```bash
-OPENAI_API_KEY=sk-...your-key-here
-ANTHROPIC_API_KEY=sk-ant-...your-key-here
-GOOGLE_API_KEY=...your-key-here
+OPENAI_API_KEY=<your-openai-api-key>
+ANTHROPIC_API_KEY=<your-anthropic-api-key>
+GOOGLE_API_KEY=<your-google-api-key>
 PORT=7860
 GRADIO_SERVER_NAME=0.0.0.0
 ```
