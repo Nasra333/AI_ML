@@ -27,9 +27,9 @@ git push origin main
 In Railway dashboard → **Variables** tab, add:
 
 ```bash
-OPENAI_API_KEY=sk-proj-...
-ANTHROPIC_API_KEY=sk-ant-...
-GOOGLE_API_KEY=AIza...
+OPENAI_API_KEY=<your-openai-api-key>
+ANTHROPIC_API_KEY=<your-anthropic-api-key>
+GOOGLE_API_KEY=<your-google-api-key>
 PORT=7860
 GRADIO_SERVER_NAME=0.0.0.0
 ```
