@@ -69,3 +69,13 @@ railway.json
 # Deployment docs
 RAILWAY_DEPLOYMENT.md
 DEPLOYMENT_CHECKLIST.md
+CICD_SUMMARY.md
+PR_RAILWAY_DEPLOYMENT.md
+QUICK_DEPLOY.md
+QUICK_FIX.md
+RAILWAY_SETUP_SUMMARY.md
+GITHUB_SECRETS_SETUP.md
+
+# Development requirements
+requirements.txt
+runtime.txt
