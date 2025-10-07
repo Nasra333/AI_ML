@@ -1,0 +1,10 @@
+[phases.setup]
+nixPkgs = ["python311"]
+
+[phases.install]
+cmds = [
+    "pip install --no-cache-dir -r requirements-prod.txt"
+]
+
+[start]
+cmd = "python app.py"

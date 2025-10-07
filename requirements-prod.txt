@@ -1,0 +1,20 @@
+# Production Dependencies - Minimal set for Railway deployment
+# Only packages actually imported and used in the application
+
+# Core Framework
+gradio
+python-dotenv
+
+# AI API Clients (used in utils.py)
+openai
+anthropic
+google-generativeai
+
+# Document Processing (used in job_match_tab.py and study_notes)
+PyPDF2
+python-docx
+beautifulsoup4
+requests
+
+# System utilities
+setuptools
