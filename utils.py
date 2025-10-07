@@ -80,7 +80,6 @@ def onSystemPromptChanged(prompt: str):
 def userMessage(message: str, history: list):
     messages = []
     global contextModelchanged
-    global systemMessage
 
     if contextModelchanged:
         history.clear()
