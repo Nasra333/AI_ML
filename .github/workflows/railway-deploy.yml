@@ -37,7 +37,7 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: Deploy to Railway
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         uses: bervProject/railway-deploy@main
         with:
           service: ${{ secrets.RAILWAY_SERVICE_ID }}
@@ -45,7 +45,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deployment Status
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         run: |
           echo "✅ Deployment to Railway initiated successfully!"
           echo "🔗 Check your Railway dashboard for deployment status"
