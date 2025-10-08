@@ -211,6 +211,9 @@ __marimo__/
 
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md
+.codacy/cli.sh
 
 
 .DS_Store
+
+tabs/smart_cv/conversation_history.json

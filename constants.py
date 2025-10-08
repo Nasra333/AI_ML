@@ -4,13 +4,15 @@ TAB_STUDY_NOTES = "TAB_STUDY_NOTES"
 TAB_JOB_MATCH = "TAB_JOB_MATCH"
 TAB_CODE_EXPLAINER = "TAB_CODE_EXPLAINER"
 TAB_VIRTUAL_CASE_STUDY = "TAB_VIRTUAL_CASE_STUDY"
+TAB_SMART_CV = "TAB_SMART_CV"
 
 TAB_NAMES = {
     TAB_RECIPE: "Recommend Recipe",
     TAB_STUDY_NOTES: "Study Notes Q&A",
     TAB_JOB_MATCH: "Job Match",
     TAB_CODE_EXPLAINER: "Explain Code",
-    TAB_VIRTUAL_CASE_STUDY: "Create Case Study"
+    TAB_VIRTUAL_CASE_STUDY: "Create Case Study",
+    TAB_SMART_CV: "Smart CV",
 }
 
 default_tab_titles = {
