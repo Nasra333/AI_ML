@@ -15,6 +15,7 @@ PyPDF2
 python-docx
 beautifulsoup4
 requests
+fpdf
 
 # System utilities
 setuptools
